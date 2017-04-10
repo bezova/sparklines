@@ -128,62 +128,24 @@ def sparkline(data,
     html = """<img src="data:image/png;base64,%s"/>""" % base64.b64encode(bio.getvalue()).decode('utf-8')
     return html
     
-def create(dataframe, data, figsize=False, title='sparklines',
-           copy=False, columns=None, **kwargs):
+def create(data, **kwargs):
     """Create a column of html image data to render as inline sparklines.
     
     Parameters
     ----------
-    dataframe : Pandas Dataframe, containing column name defined by parameter
-        'data'
-    data : str, column name with array-like data to be plotted in a sparkline
-    figsize : tuple of float, length and height of sparkline plot.  Attribute
-        of matplotlib.pyplot.plot.  Optional, default=(4, 0.25).
-    title : str, name of column to insert sparklines.
-        Optional, default=sparklines.
-    copy : bool, return a copy of the input dataframe with sparklines.
-        Optional, default=False.
-    columns : list of str, column names to return if 'copy' attribute is True.
-        Optional, default=None
+    data : Pandas Dataframe, containing all columns that contain data to plot
     **kwargs : keyword arguments to pass to sparkline function
     
     Returns
     -------
-    df : Pandas Dataframe with sparklines in column set by 'title' attribute.
-        Only returned if 'copy' is True.
+    df : Pandas Dataframe with column named 'sparkline'
     """
-    
-    sparkline_data = dataframe[data]
-    
-    if 'figsize' in kwargs:
-        figsize = kwargs['figsize']
-    else:
-        figsize = (4, 0.25)
-    if 'title' in kwargs:
-        title = kwargs['title']
-    else:
-        title = 'sparklines'    
-    if copy:
-        if columns is not None:
-            if isinstance(columns, tuple):
-                columns = list(columns)
-            if isinstance(columns, str):
-                columns = [columns]
-        else:
-            columns = []
-        df = dataframe.copy()
         
-        df[title] = sparkline_data.map(lambda x: sparkline(x, figsize=figsize,
-                                                           **kwargs))
-        if title not in columns:
-            columns = columns + [title]
-        df = df[columns]
-        return df
-    else:
-        dataframe[title] = sparkline_data.map(lambda x: sparkline(x,
-                                                                  figsize=figsize,
-                                                                  **kwargs))
-        return None
+    _df = pd.DataFrame()
+    def _func(x):
+        return sparkline(x, **kwargs)
+    _df['sparkline'] = data.apply(_func, axis=1)
+    return _df
     
 def show(dataframe, index=False):
     """Display dataframe in Jupyter Notebook.

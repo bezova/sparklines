@@ -8,6 +8,4 @@ https://en.wikipedia.org/wiki/Sparkline
 Forked and extended from:
 https://github.com/iiSeymour/sparkline-nb
 
-### Example
-
-[Pandas Sparklines Demo.ipynb](Pandas Sparklines Demo.ipynb)
+See Jupyter Notebook for example use.

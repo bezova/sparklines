@@ -164,19 +164,23 @@ def show(dataframe, index=False):
     display(HTML(dataframe.to_html(index=index, escape=False)))
     column_reset()
     
-def to_html(dataframe, filename, **kwargs):
+def to_html(dataframe, filename=None, **kwargs):
     """Save Dataframe with sparklines to html file.
     
     Parameters
     ----------
     dataframe : Pandas Dataframe with sparklines inline
-    filename : str, complete filepath to save output html table to
+    filename : str if set, complete filepath to save output html table to.  If False, returns HTML generated.
     kwargs : keyword arguments, passed to pandas.DataFrame.to_html
     """
     
     column_sparklines()
     a = dataframe.to_html(escape=False)
     column_reset()
+    
+    if filename is None:
+        return a
+    
     f = open(filename + '.html', 'w')
     f.write(html_head)
     f.write(a)

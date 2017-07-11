@@ -53,23 +53,26 @@ html_head = """<!DOCTYPE html>
 html_tail = """</body>
                </html>"""
 
+
 def column_sparklines():
     """Set column display width and maximum items displayed to
     prevent sparklines from being truncated
     """
     pd.set_option('display.max_colwidth', -1)
     pd.set_option('display.max_seq_items', 2)
-    
+
+
 def column_reset():
     """Reset column display width and maximum items to defaults"""
     pd.reset_option('display.max_colwidth')
     pd.reset_option('display.max_seq_items')
-    
+
+
 def sparkline(data,
               point=True, point_color='red', point_marker='.',
               point_fill='red', point_size=6, point_alpha=1.0,
               fill=True, fill_color='blue', fill_alpha=0.1,
-              figsize=(4, 0.25), **kwargs):
+              figsize=(4, 0.25), xlim=None, ylim=None, **kwargs):
     """Create a single HTML image tag containing a base64 encoded
     sparkline style plot
     
@@ -127,7 +130,8 @@ def sparkline(data,
     plt.close()
     html = """<img src="data:image/png;base64,%s"/>""" % base64.b64encode(bio.getvalue()).decode('utf-8')
     return html
-    
+
+
 def create(data, **kwargs):
     """Create a column of html image data to render as inline sparklines.
     
@@ -146,7 +150,8 @@ def create(data, **kwargs):
         return sparkline(x, **kwargs)
     _df['sparkline'] = data.apply(_func, axis=1)
     return _df
-    
+
+
 def show(dataframe, index=False):
     """Display dataframe in Jupyter Notebook.
     
@@ -163,7 +168,8 @@ def show(dataframe, index=False):
     # _repr_html_ escapes HTML so manually handle the rendering
     display(HTML(dataframe.to_html(index=index, escape=False)))
     column_reset()
-    
+
+
 def to_html(dataframe, filename=None, **kwargs):
     """Save Dataframe with sparklines to html file.
     
@@ -186,4 +192,3 @@ def to_html(dataframe, filename=None, **kwargs):
     f.write(a)
     f.write(html_tail)
     f.close()
-    
